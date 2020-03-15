@@ -1,9 +1,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdlib.h> // real path
+#include <sys/param.h> // path max
 #include <fstream>
 #include "json.hpp"
-#include "Todo.hpp"
 
 using namespace std;
 using namespace nlohmann;
@@ -16,7 +17,8 @@ void draw_line();
 json load_file_to_read();
 fstream load_file_to_write();
 
-// argv[0] nome do arquivo argv[1] comando argv[2] em diante sao parametros do comando
+string path = "tasks.json";
+
 int main(int argc, char* argv[])
 {
   if (argc < 2)
@@ -54,10 +56,7 @@ int main(int argc, char* argv[])
     }
     else if(command == "list")
     {
-      file.open("tasks.json", ios::in);  
-      json jsonTasks;
-      file >> jsonTasks;
-      file.close();
+			json jsonTasks = load_file_to_read();
       print_tasks(jsonTasks["tasks"]);
     }
     else if(command == "clean")
@@ -77,7 +76,6 @@ int main(int argc, char* argv[])
       // get the task user is passing
       string task = get_task(argv, start, end);
       json jsonTasks = load_file_to_read();
-      cout << jsonTasks << endl;
       vector<string> tasks = jsonTasks["tasks"];
       remove_task(tasks, task);
 
@@ -142,7 +140,12 @@ json load_file_to_read()
 {
   fstream file;
   json jsonFile;
-  file.open("tasks.json", ios::in);
+  file.open(path, ios::in);
+	if (!file)
+	{
+		cout << "File not found" << endl;
+		exit(0);
+	}
   file >> jsonFile;
 
   file.close();
@@ -152,7 +155,12 @@ json load_file_to_read()
 fstream load_file_to_write()
 {
   fstream file;
-  file.open("tasks.json", ios::out);
+  file.open(path, ios::out);
+	if (!file)
+	{
+		cout << "File not found" << endl;
+		exit(0);
+	}
 
   return file;
 }
@@ -164,16 +172,16 @@ fstream load_file_to_write()
  */
 void remove_task(vector<string>& tasks, string task)
 {
-  for (vector<string>::iterator i = tasks.begin(); i != tasks.end(); i++)
-  {
-    if (*i == task)
-    {
-      tasks.erase(i, i + 1); 
-      return;
-    }
-  }
+	for (vector<string>::iterator i = tasks.begin(); i != tasks.end(); i++)
+	{
+		if (*i == task)
+		{
+			tasks.erase(i, i + 1); 
+			return;
+		}
+	}
 
-  cout << "Task not found" << endl;
+	cout << "Task not found" << endl;
 }
 
 void draw_line()

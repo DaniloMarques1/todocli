@@ -40,12 +40,7 @@ Delete everything
 
 ```json
   {
-    "tasks": [
-      "study pointers",
-      "play video games",
-      "watch netflix",
-      "finish homework"
-    ]
+    "tasks": []
   }
 ```
 
@@ -56,3 +51,15 @@ Add the following in your .bashrc file:
 ```javascript
 export PATH="path/to/your/executable:$PATH"
 ```
+
+Make sure you have a json file called tasks.json in the same directory you put your executable file and it should have the same structure (just copy and paste the structure inside a tasks.json file). For exampel i have mine in the following dir:  
+
+here is the path to tasks.json file
+/home/danilo/Documents/todocli/tasks.json
+
+Here is the executable path that i pu inside my .bashrc
+/home/danilo/Documents/todocli/ 
+
+# TODO
+
+1. Fix the path for the tasks.json file
