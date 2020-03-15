@@ -35,3 +35,16 @@ todo clean
 
 Delete everything
 
+
+### Json structure of the tasks
+
+```json
+  {
+    "tasks": [
+      "study pointers",
+      "play video games",
+      "watch netflix",
+      "finish homework"
+    ]
+  }
+```
