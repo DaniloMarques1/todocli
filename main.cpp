@@ -8,8 +8,9 @@
 using namespace std;
 using namespace nlohmann;
 
-string get_add(char* argv[], int start, int end);
+string get_task(char* argv[], int start, int end);
 void print_tasks(vector<string> tasks);
+void remove_task(vector<string>& tasks, string task);
 void draw_line();
 
 json load_file_to_read();
@@ -31,11 +32,8 @@ int main(int argc, char* argv[])
     // add a new task to the file
     if (command == "add")
     {
-      file.open("tasks.json", ios::in);
-      json jsonTasks;
+      json jsonTasks = load_file_to_read();
 
-      file >> jsonTasks;
-      file.close();
       if(argc < 3)
       {
         cout << "You need to specify what you want to add!!" << endl;
@@ -45,10 +43,10 @@ int main(int argc, char* argv[])
       {
         int start = 2;
         int end = argc;
-        string task = get_add(argv, start, end); 
+        string task = get_task(argv, start, end); 
         jsonTasks["tasks"].push_back(task);
 
-        file.open("tasks.json", ios::out);
+        file = load_file_to_write();
         file << jsonTasks.dump();
 
         file.close();
@@ -67,8 +65,25 @@ int main(int argc, char* argv[])
       json jsonTasks = load_file_to_read();
       jsonTasks["tasks"].clear();
 
-      fstream file = load_file_to_write();
+      file = load_file_to_write();
       file << jsonTasks.dump(); 
+
+      file.close();
+    }
+    else if (command == "remove")
+    {
+      int start = 2;   
+      int end = argc;
+      // get the task user is passing
+      string task = get_task(argv, start, end);
+      json jsonTasks = load_file_to_read();
+      cout << jsonTasks << endl;
+      vector<string> tasks = jsonTasks["tasks"];
+      remove_task(tasks, task);
+
+      jsonTasks["tasks"] = tasks;
+      fstream file = load_file_to_write();
+      file << jsonTasks.dump();
 
       file.close();
     }
@@ -78,13 +93,13 @@ int main(int argc, char* argv[])
 }
 
 /**
- * It will return a string with everything you wrote after the add command
+ * It will return a string with everything you wrote after the add/remove command
  * @Param argv - a pointer to all arguments
  * @Param start - where should i start (where the string to be added starts)
  * @Param end - how long is the argv array
- * @Return string - will return everything after the add command as a string
+ * @Return string - will return everything after the add/remove command as a string
  */
-string get_add(char* argv[], int start, int end)
+string get_task(char* argv[], int start, int end)
 {
   string task = "";
 
@@ -125,7 +140,6 @@ void print_tasks(vector<string> tasks)
 
 json load_file_to_read()
 {
-  cout << "Opa" << endl;
   fstream file;
   json jsonFile;
   file.open("tasks.json", ios::in);
@@ -141,6 +155,25 @@ fstream load_file_to_write()
   file.open("tasks.json", ios::out);
 
   return file;
+}
+
+/**
+ * I will remove a task from the vector
+ * @Param tasks - vector of strings
+ * @Param task - the task to be removed
+ */
+void remove_task(vector<string>& tasks, string task)
+{
+  for (vector<string>::iterator i = tasks.begin(); i != tasks.end(); i++)
+  {
+    if (*i == task)
+    {
+      tasks.erase(i, i + 1); 
+      return;
+    }
+  }
+
+  cout << "Task not found" << endl;
 }
 
 void draw_line()
