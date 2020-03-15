@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <fstream>
 #include "json.hpp"
 #include "Todo.hpp"
 
@@ -18,9 +20,18 @@ int main(int argc, char* argv[])
   }
   else
   {
+    fstream file;   
+
     string command = argv[1]; 
+    // add a new task to the file
     if (command == "add")
     {
+      file.open("tasks.json", ios::in);
+      json jsonTasks;
+
+      file >> jsonTasks;
+      file.close();
+
       if(argc < 3)
       {
         cout << "You need to specify what you want to add!!" << endl;
@@ -31,6 +42,10 @@ int main(int argc, char* argv[])
         int start = 2;
         int end = argc;
         string task = get_add(argv, start, end); 
+        jsonTasks["tasks"].push_back(task);
+        cout << jsonTasks << endl;
+        file.open("tasks.json", ios::out);
+        file << jsonTasks.dump();
       }
     }
   }
