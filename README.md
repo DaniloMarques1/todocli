@@ -48,3 +48,11 @@ Delete everything
     ]
   }
 ```
+
+### Using
+
+Add the following in your .bashrc file:
+
+```javascript
+export PATH="path/to/your/executable:$PATH"
+```

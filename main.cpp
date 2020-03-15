@@ -12,6 +12,9 @@ string get_add(char* argv[], int start, int end);
 void print_tasks(vector<string> tasks);
 void draw_line();
 
+json load_file_to_read();
+fstream load_file_to_write();
+
 // argv[0] nome do arquivo argv[1] comando argv[2] em diante sao parametros do comando
 int main(int argc, char* argv[])
 {
@@ -43,11 +46,11 @@ int main(int argc, char* argv[])
         int start = 2;
         int end = argc;
         string task = get_add(argv, start, end); 
-
         jsonTasks["tasks"].push_back(task);
-        cout << jsonTasks << endl;
+
         file.open("tasks.json", ios::out);
         file << jsonTasks.dump();
+
         file.close();
       }
     }
@@ -56,7 +59,18 @@ int main(int argc, char* argv[])
       file.open("tasks.json", ios::in);  
       json jsonTasks;
       file >> jsonTasks;
+      file.close();
       print_tasks(jsonTasks["tasks"]);
+    }
+    else if(command == "clean")
+    {
+      json jsonTasks = load_file_to_read();
+      jsonTasks["tasks"].clear();
+
+      fstream file = load_file_to_write();
+      file << jsonTasks.dump(); 
+
+      file.close();
     }
   }
 
@@ -92,6 +106,11 @@ string get_add(char* argv[], int start, int end)
  */
 void print_tasks(vector<string> tasks)
 {
+  if (tasks.size() == 0)
+  {
+    cout << "You have no tasks yet" << endl;
+    exit(0);
+  }
   draw_line();
 
   int i = 1;
@@ -102,6 +121,26 @@ void print_tasks(vector<string> tasks)
   }
 
   draw_line();
+}
+
+json load_file_to_read()
+{
+  cout << "Opa" << endl;
+  fstream file;
+  json jsonFile;
+  file.open("tasks.json", ios::in);
+  file >> jsonFile;
+
+  file.close();
+  return jsonFile;
+}
+
+fstream load_file_to_write()
+{
+  fstream file;
+  file.open("tasks.json", ios::out);
+
+  return file;
 }
 
 void draw_line()
